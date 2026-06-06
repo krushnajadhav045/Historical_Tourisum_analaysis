@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>AI Historical Tourism Analysis</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🏛 AI Historical Tourism Analysis</h1>
+
+<form method="POST">
+
+<label>Select Place</label>
+<select name="place">
+{% for p in places %}
+<option value="{{p}}">{{p}}</option>
+{% endfor %}
+</select>
+
+<label>Select Month</label>
+<select name="month">
+{% for m in months %}
+<option value="{{m}}">{{m}}</option>
+{% endfor %}
+</select>
+
+<label>Select Season</label>
+<select name="season">
+{% for s in seasons %}
+<option value="{{s}}">{{s}}</option>
+{% endfor %}
+</select>
+
+<label>Weekend / Holiday</label>
+<select name="weekend">
+{% for w in weekends %}
+<option value="{{w}}">{{w}}</option>
+{% endfor %}
+</select>
+
+<div class="buttons">
+
+<button type="submit" class="predict">Predict Tourism</button>
+
+<button type="button" class="clear" onclick="clearPage()">Clear</button>
+
+</div>
+
+</form>
+
+{% if result %}
+
+<div class="result">
+
+<h2>Prediction Results</h2>
+
+<p><b>Place:</b> {{result.place}}</p>
+<p><b>Tourist Crowd:</b> {{result.crowd}}</p>
+<p><b>Kids Visitors:</b> {{result.kids}}</p>
+<p><b>Senior Citizens:</b> {{result.senior}}</p>
+<p><b>Foreign Tourists:</b> {{result.foreign}}</p>
+
+</div>
+
+<div class="chart-box">
+
+<canvas id="tourismChart"></canvas>
+
+</div>
+
+<script>
+
+const graphData = JSON.parse('{{ graph_data | tojson | safe }}');
+
+const ctx = document.getElementById('tourismChart');
+
+new Chart(ctx,{
+type:'bar',
+data:{
+labels:['Crowd','Kids','Senior','Foreign'],
+datasets:[{
+label:'Tourism Analysis',
+data:graphData,
+backgroundColor:[
+'#3b82f6',
+'#10b981',
+'#f59e0b',
+'#ef4444'
+]
+}]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+scales:{
+y:{
+beginAtZero:true
+}
+}
+}
+});
+
+</script>
+
+{% endif %}
+
+</div>
+
+<script>
+
+function clearPage(){
+window.location.href="/";
+}
+
+</script>
+
+</body>
+</html>
